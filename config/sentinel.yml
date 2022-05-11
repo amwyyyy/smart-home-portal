@@ -1,0 +1,14 @@
+version: "v1"
+sentinel:
+  app:
+    name: ladon
+    type: 0
+  log:
+    dir: "logs/csp"
+    pid: false
+    metric:
+      maxFileCount: 10
+      flushIntervalSec: 1
+  stat:
+    system:
+      collectIntervalMs: 3000

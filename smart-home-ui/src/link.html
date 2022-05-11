@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" href="./css/element-ui.css">
+  <script src="./js/echarts.min.js"></script>
+  <script src="./js/jquery-1.7.1.js"></script>
+  <script src="./js/vue.js"></script>
+  <script src="./js/element-ui.js"></script>
+  <script src="./js/common.js"></script>
+</head>
+<body>
+<div id="app">
+  <section>
+    <!--工具条-->
+    <el-col :span="24" class="toolbar">
+      <el-form :inline="true">
+        <el-form-item>
+          <el-date-picker v-model="timeRange"
+                          type="datetimerange"
+                          range-separator="至"
+                          start-placeholder="开始日期"
+                          end-placeholder="结束日期"
+                          :default-time="['12:00:00','12:00:00']">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-date-picker
+                  v-model="statDate"
+                  type="date"
+                  placeholder="时间段统计日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="query">搜索</el-button>
+        </el-form-item>
+      </el-form>
+    </el-col>
+  </section>
+</div>
+<div id="stat" style="width:100%;height:500px;"></div>
+<div id="timeLine" style="width:100%;height:500px;margin-top: 20px"></div>
+<div id="range" style="width:100%;height:500px;margin-top: 20px"></div>
+<div id="bucket" style="width:100%;height:500px;margin-top: 20px"></div>
+</body>
+<script type="text/javascript">
+    const vm = new Vue({
+        el: '#app',
+        data: {
+            servicePath: '',
+            statDate: new Date(),
+            timeRange: [new Date().setTime(new Date().getTime() - 30 * 60 * 1000), new Date().getTime()],
+            chart: null,
+            range: null,
+            bucket: null,
+            timeLine: null
+        },
+        mounted() {
+            // 基于准备好的dom，初始化echarts实例
+            this.chart = echarts.init(document.getElementById('stat'), 'light');
+            this.range = echarts.init(document.getElementById('range'), 'light');
+            this.bucket = echarts.init(document.getElementById('bucket'), 'light');
+            this.timeLine = echarts.init(document.getElementById('timeLine'), 'light');
+
+            let start, end;
+            if (this.timeRange[0]) {
+                start = new Date(this.timeRange[0]);
+            }
+            if (this.timeRange[1]) {
+                end = new Date(this.timeRange[1]);
+            }
+            drawChart(this.servicePath, start, end, this.statDate);
+        },
+        methods: {
+            query: function () {
+                let start, end;
+                if (this.timeRange && this.timeRange[0]) {
+                    start = new Date(this.timeRange[0]);
+                }
+                if (this.timeRange && this.timeRange[1]) {
+                    end = new Date(this.timeRange[1]);
+                }
+                drawChart(this.servicePath, start, end, this.statDate);
+            }
+        }
+    });
+
+    function drawChart(servicePath, startTime, endTime, statDate) {
+        post("/service_latency/stat", {
+            servicePath: servicePath,
+            startTime: startTime,
+            endTime: endTime
+        }, function (result) {
+            for (let i in result) {
+                result[i] = Object.values(result[i]);
+            }
+
+            result.unshift(['product', '调用次数', '平均耗时', '最大耗时', '最小耗时']);
+
+            // 指定图表的配置项和数据
+            const option = {
+                title: {
+                    text: '接口耗时统计'
+                },
+                dataZoom: [{
+                    type: 'slider',
+                    show: true,
+                    start: 0,
+                    end: 20
+                }],
+                tooltip: {},
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                legend: {},
+                dataset: {
+                    source: result
+                },
+                xAxis: {
+                    type: 'category',
+                    axisLabel: {
+                        show: true,
+                        interval: 0,
+                        rotate: "8"
+                    },
+                },
+                yAxis: {},
+                series: [
+                    {type: 'bar'},
+                    {type: 'bar'},
+                    {type: 'bar'},
+                    {type: 'bar'}
+                ]
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            vm.chart.setOption(option);
+        });
+
+        post("/service_latency/range", {
+            servicePath: servicePath,
+            startTime: startTime,
+            endTime: endTime
+        }, function (result) {
+            const num = result['product'].length;
+            let seriesArr = [];
+            for (var i = 0; i < num; i++) {
+                seriesArr[i] = {type: 'bar'};
+            }
+
+            result['product'].unshift('product');
+            result['result'].unshift(result['product']);
+
+            // 指定图表的配置项和数据
+            const option = {
+                title: {
+                    text: '接口耗时分段统计'
+                },
+                tooltip: {},
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                dataset: {
+                    source: result['result']
+                },
+                legend: {
+
+                },
+                xAxis: {type: 'category'},
+                yAxis: {},
+                series: seriesArr
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            vm.range.setOption(option);
+        });
+
+        post("/service_latency/bucket", {
+            servicePath: servicePath,
+            startTime: statDate,
+            endTime: null
+        }, function (result) {
+            for (let i in result) {
+                result[i] = Object.values(result[i]);
+            }
+
+            result.unshift(['product', '调用次数', '平均耗时']);
+
+            // 指定图表的配置项和数据
+            const option = {
+                title: {
+                    text: '接口时间分段段统计'
+                },
+                tooltip: {},
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                dataset: {
+                    source: result
+                },
+                legend: {},
+                xAxis: {type: 'category'},
+                yAxis: {},
+                series: [
+                    {type: 'bar'},
+                    {type: 'bar'}
+                ]
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            vm.bucket.setOption(option);
+        });
+
+        post("service_latency/time-line", {
+            servicePath: servicePath,
+            startTime: startTime,
+            endTime: endTime
+        }, function (result) {
+            const num = result['product'].length;
+            let seriesArr = [];
+            for (var i = 0; i < num; i++) {
+                seriesArr[i] = {type: 'line'};
+            }
+
+            result['product'].unshift('product');
+            result['result'].unshift(result['product']);
+
+            const option = {
+                title: {
+                    text: '每分钟耗时'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                legend: {},
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                dataset: {
+                    source: result['result']
+                },
+                series: seriesArr
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            vm.timeLine.setOption(option);
+        });
+    }
+</script>
+<style scoped>
+    .toolbar {
+        background: #fff;
+        padding: 10px 10px 0 10px;
+    }
+
+    #app {
+        height: 70px;
+    }
+</style>
+</html>
