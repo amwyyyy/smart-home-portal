@@ -12,8 +12,6 @@ func New(e *gin.Engine) {
 	contextPath.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
-	contextPath.GET("/receive", controllers.ReceiveMsg)
-	contextPath.POST("/receive", controllers.ReceiveMsg)
 
-	contextPath.GET("/delReview", controllers.DelFlowId)
+	contextPath.POST("/collect_photo", controllers.CollectPhoto)
 }
