@@ -36,23 +36,3 @@ debug = true
     # 是否记录访问日志，就是浏览器访问系统时产生的日志，
     # 只有上面的 mode 不为 close， 并且 access 为 true 的时候才会记录日志
     access = true
-
-[ekb]
-  appKey = "5a1491e2-988a-4e00-875d-7bc070a955f3"
-  appSecurity = "f39e3ef0-8b39-4df0-8cc2-3b236fecdb9f"
-  servicePath = "https://wx2.ekuaibao.com"
-
-[ekb.api]
-  getAccessTokenURI = "/api/openapi/v1/auth/getAccessToken"
-  flowDetailsURI = "/api/openapi/v1/flowDetails"
-
-[oa]
-  newOaBaseUrl = "https://newoa.iboxpay.com"
-  sysAttendUrl = "/api/sys-attend/sysAttendRestservice/addAttend"
-  kmReviewUrl = "/api/km-review/kmReviewRestService/addReview"
-  btFdTemplateId = "17ddfed2f5db1d000409764403d9a360"
-  goFdTemplateId = "17de1935631d1978ae40f9a49d7a87cf"
-  errTemplateId = "17ed802e52267267691952c437a98604"
-  ehrUrl = "https://ehr.iboxpay.com/hcm/rest-api/time/calOutTime"
-  btAttendType = "313107ba6d934bb9a224fdc57af11a61"
-  goAttendType = "ae0e3e40f0eb410e815b06304fb1b54f"

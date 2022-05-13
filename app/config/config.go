@@ -41,48 +41,6 @@ type Config struct {
 
 	// 日志相关的配置
 	Log Log `toml:"log"`
-
-	// 易快报配置
-	EkuaibaoCfg EkbConfig `toml:"ekb"`
-
-	// oa 相关配置
-	NewOaCfg NewOaConfig `toml:"oa"`
-}
-
-type NewOaConfig struct {
-	NewOaBaseUrl string `toml:"newOaBaseUrl"`
-	SysAttendUrl string `toml:"sysAttendUrl"`
-	KmReviewUrl  string `toml:"kmReviewUrl"`
-
-	// 出差申请单流程Id
-	BtFdTemplateId string `toml:"btFdTemplateId"`
-	// 外出申请单流程Id
-	GoFdTemplateId string `toml:"goFdTemplateId"`
-	// 异常处理流程单Id
-	ErrTemplateId string `toml:"errTemplateId"`
-
-	EhrUrl string `toml:"ehrUrl"`
-
-	// 请假类型，出差
-	BtAttendType string `toml:"btAttendType"`
-	// 请假类型，外出
-	GoAttendType string `toml:"goAttendType"`
-}
-
-type EkbConfig struct {
-	AppKey string `toml:"appKey"`
-
-	AppSecurity string `toml:"appSecurity"`
-
-	// 服务地址
-	ServicePath string `toml:"servicePath"`
-
-	Api ApiURI `toml:"api"`
-}
-
-type ApiURI struct {
-	GetAccessTokenURI string `toml:"getAccessTokenURI"`
-	FlowDetailsURI    string `toml:"flowDetailsURI"`
 }
 
 // Log 是日志相关的配置

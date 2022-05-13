@@ -15,6 +15,5 @@ func New(e *gin.Engine) {
 	contextPath.GET("/receive", controllers.ReceiveMsg)
 	contextPath.POST("/receive", controllers.ReceiveMsg)
 
-	contextPath.GET("/addReview", controllers.AddReview)
 	contextPath.GET("/delReview", controllers.DelFlowId)
 }
