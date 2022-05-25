@@ -14,3 +14,4 @@ CHANGELOG.md 代码版本修改记录。详见： https://gitlab.com/gitlab-org/
 LICENSE 所有代码属公司资产，版权说明。
 
 [![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=amwyyyy)](https://github.com/anuraghazra/github-readme-stats)
+[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=amwyyyy)](https://github.com/anuraghazra/github-readme-stats)
