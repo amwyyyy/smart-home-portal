@@ -12,3 +12,5 @@ README.md 简单描述系统功能以及代码编译说明
 CHANGELOG.md 代码版本修改记录。详见： https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/CHANGELOG.md
 
 LICENSE 所有代码属公司资产，版权说明。
+
+[![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=amwyyyy)](https://github.com/anuraghazra/github-readme-stats)
